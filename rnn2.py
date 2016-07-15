@@ -4,14 +4,14 @@ Classify music clips according to genre.
 
 Usage:
     After completing the steps listed in the README file, use this command:
-    ./music3.py -e 16 -w /home/ubuntu/nervana/music -r 0 -s music3.pkl -v
+    ./rnn2.py -e 16 -w /home/ubuntu/nervana/music -r 0 -s rnn2.pkl -v
 """
 
 from neon.util.argparser import NeonArgparser
 from neon.initializers import Gaussian, GlorotUniform
-from neon.layers import Conv, Pooling, GeneralizedCost, Affine, Recurrent, RecurrentMean
+from neon.layers import Conv, Pooling, GeneralizedCost, Affine, LSTM, RecurrentMean
 from neon.optimizers import Adagrad
-from neon.transforms import Rectlin, Softmax, CrossEntropyMulti, Misclassification
+from neon.transforms import Logistic, Tanh, Rectlin, Softmax, CrossEntropyMulti, Misclassification
 from neon.models import Model
 from neon.data import DataLoader, AudioParams
 from neon.callbacks.callbacks import Callbacks
@@ -36,7 +36,8 @@ layers = [Conv((2, 2, 4), init=init, activation=Rectlin(),
           Pooling(2, strides=2),
           Conv((3, 3, 4), init=init, batch_norm=True, activation=Rectlin(),
                strides=dict(str_h=1, str_w=2)),
-          Recurrent(128, init=GlorotUniform(), activation=Rectlin(), reset_cells=True),
+          LSTM(128, init=GlorotUniform(), gate_activation=Tanh(),
+               activation=Logistic(), reset_cells=True),
           RecurrentMean(),
           Affine(nout=common['nclasses'], init=init, activation=Softmax())]
 

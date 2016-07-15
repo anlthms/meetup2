@@ -4,13 +4,13 @@ Classify music clips according to genre.
 
 Usage:
     After completing the steps listed in the README file, use this command:
-    ./music1.py -e 16 -w /home/ubuntu/nervana/music -r 0 -s music1.pkl -v
+    ./rnn3.py -e 16 -w /home/ubuntu/nervana/music -r 0 -s rnn3.pkl -v
 """
 
 from neon.util.argparser import NeonArgparser
-from neon.initializers import Gaussian
-from neon.layers import Conv, Pooling, GeneralizedCost, Affine
-from neon.optimizers import GradientDescentMomentum
+from neon.initializers import Gaussian, GlorotUniform
+from neon.layers import Conv, Pooling, GeneralizedCost, Affine, DeepBiRNN, RecurrentMean
+from neon.optimizers import Adagrad
 from neon.transforms import Rectlin, Softmax, CrossEntropyMulti, Misclassification
 from neon.models import Model
 from neon.data import DataLoader, AudioParams
@@ -36,11 +36,13 @@ layers = [Conv((2, 2, 4), init=init, activation=Rectlin(),
           Pooling(2, strides=2),
           Conv((3, 3, 4), init=init, batch_norm=True, activation=Rectlin(),
                strides=dict(str_h=1, str_w=2)),
-          Affine(128, init=init, batch_norm=True, activation=Rectlin()),
+          DeepBiRNN(128, init=GlorotUniform(), batch_norm=True, activation=Rectlin(),
+                    reset_cells=True, depth=3),
+          RecurrentMean(),
           Affine(nout=common['nclasses'], init=init, activation=Softmax())]
 
 model = Model(layers=layers)
-opt = GradientDescentMomentum(learning_rate=0.01, momentum_coef=0.9)
+opt = Adagrad(learning_rate=0.01, gradient_clip_value=15)
 metric = Misclassification()
 callbacks = Callbacks(model, eval_set=valid, metric=metric, **args.callback_args)
 cost = GeneralizedCost(costfunc=CrossEntropyMulti())
