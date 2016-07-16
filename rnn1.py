@@ -4,7 +4,7 @@ Classify music clips according to genre.
 
 Usage:
     After completing the steps listed in the README file, use this command:
-    ./rnn1.py -e 16 -w /home/ubuntu/nervana/music -r 0 -s rnn1.pkl -v
+    ./rnn1.py -e 16 -w /home/ubuntu/nervana/music -r 0 -v
 """
 
 from neon.util.argparser import NeonArgparser
