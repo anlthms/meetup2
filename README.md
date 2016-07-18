@@ -3,7 +3,7 @@ This repo contains examples of using [neon](https://github.com/NervanaSystems/ne
 
 Usage:
 - Launch a g2.2xlarge instance on [AWS](http://aws.amazon.com/ec2/).
-- Use the AMI "nervana-neon-10" (available in US West zones).
+- Use the AMI "nervana-neon10" (available in US West zones).
 - Log into the instance using ssh.
 - Run the following command to activate the virtual environment used by neon:
     ```
